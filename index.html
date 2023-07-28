@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Music</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/fonts/themify-icons/themify-icons.css">
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+    <!--Player-->
+    <div class="player">
+
+        <!--Dashboard-->
+        <div class="dashboard">
+            <!--Header-->
+            <header>
+                <h4>Now playing</h4>
+                <h2>Shelter</h2>
+            </header>
+        <!--CD-->
+        <div class="cd">
+            <div class="cd-thr"></div>
+        </div>
+        <!--Control-->
+        <div class="control">
+            <div class="btn btn-repeat">
+                <i class="ico ti-reload"></i>
+            </div>
+            <div class="btn btn-back">
+                <i class="ti-control-skip-backward"></i>
+            </div>
+            <div class="btn btn-pause-play">
+                <i class="ico ti-control-play"></i>
+                <i class="ico ti-control-pause"></i>
+            </div>
+            <div class="btn btn-next">
+                <i class="ico ti-control-skip-forward"></i>
+            </div>
+            <div class="btn btn-ramdom">
+                <i class="ico ti-control-shuffle"></i>
+            </div>
+        </div>
+
+        <input type="range" class="progress" id="progress" value="0" step="1" max="100" min="0">
+
+        <audio id="audio" src=""></audio>
+        </div>
+
+
+        <!--Play Lish-->
+        <div class="playlist"></div>
+
+
+    </div>
+
+
+
+
+    
+
+
+    <script>
+        const $ = document.querySelector.bind(document)
+        const $$ = document.querySelectorAll.bind(document)
+
+        const player = $('.player')
+        const cd = $('.cd')
+        const heading = $('header h2')
+        const cdThr = $('.cd-thr')
+        const audio = $('#audio')
+        const playBtn = $('.btn-pause-play')
+        const progress = $('#progress')
+        const app = {
+            currenIndex: 0,
+            isPlaying: false,
+            songs: [
+                {
+                    name: 'Shelter',
+                    singer: 'Porter Robinson & Madeon', 
+                    path: './assets/music/song1.mp3',
+                    image: './assets/img/img1.jpg'
+                },
+                {
+                    name: 'Lone Ranger',
+                    singer: 'Rachel Platten', 
+                    path: './assets/music/song2.mp3',
+                    image: './assets/img/img2.jpg'
+                },
+                {
+                    name: 'Lightscape',
+                    singer: 'Collapsing World', 
+                    path: './assets/music/song3.mp3',
+                    image: './assets/img/img3.jpg'
+                },
+                {
+                    name: 'In The Shadow Of The Sun',
+                    singer: 'Professor Green', 
+                    path: './assets/music/song4.mp3',
+                    image: './assets/img/img4.jpg'
+                },
+                {
+                    name: 'After Dark',
+                    singer: 'Mr. Kitty', 
+                    path: './assets/music/song5.mp3',
+                    image: './assets/img/img5.jpg'
+                },
+                {
+                    name: 'Kastra',
+                    singer: 'Fool For You', 
+                    path: './assets/music/song6.mp3',
+                    image: './assets/img/img6.jpg'
+                },
+                {
+                    name: 'idfc',
+                    singer: 'blackbear ', 
+                    path: './assets/music/song7.mp3',
+                    image: './assets/img/img7.jpg'
+                },
+                {
+                    name: 'Honestly',
+                    singer: 'Ashley Alisha', 
+                    path: './assets/music/song8.mp3',
+                    image: './assets/img/img8.jpg'
+                },
+            ],
+        
+            render: function(){
+                    const html = this.songs.map(song=>{
+                        return `<div class="song">
+                                    <div class="avt" style="background-image: url('${song.image}')"></div>
+                                    <div class="inf">
+                                        <h3 class="title">${song.name}</h3>
+                                        <p class="author">${song.singer}</p>
+                                    </div>
+                                    <div class="options">
+                                        <i class="ti-more-alt"></i>
+                                    </div>
+                                </div>`
+                    })
+                    $('.playlist').innerHTML = html.join('')
+            },
+
+            defineProperties: function(){
+                Object.defineProperty(this, 'currentSong', {
+                    get: function(){
+                        return this.songs[this.currenIndex]
+                    }
+                })
+            },
+            handleEvents: function(){
+                const _this = this // lưu this ở handleEvents vào biến this của playBtn
+                const cdwidth = cd.offsetWidth
+                
+                //Xử lý phóng to / thu nhỏ CD
+                document.onscroll = function(){
+                    
+                    const scrollTop = window.scrollY || document.documentElement.scrollTop
+                    const newCdWidth = cdwidth - scrollTop
+
+                    cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
+                    cd.style.opacity = newCdWidth / cdwidth
+                }
+
+                //Xử lý khi kích play
+                playBtn.onclick = function(){
+                    if(_this.isPlaying){
+                        // _this.isPlaying = false
+                        audio.pause()
+                        // player.classList.remove('playing')
+                    } else {
+                        // _this.isPlaying = true
+                        audio.play() 
+                        // player.classList.add('playing')
+                    }
+                    
+                }
+
+                //Khi song được play
+                audio.onplay = function(){
+                    _this.isPlaying = true
+                    player.classList.add('playing')
+                }
+                 //Khi song bị pause
+                audio.onpause = function(){
+                    _this.isPlaying = false
+                    player.classList.remove('playing')
+                }
+                //Khi tiến độ bài hát thay đổi 
+                audio.ontimeupdate = function(){
+                    if(audio.duration){
+                        const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+                        progress.value = progressPercent
+                    }
+                    
+                }
+                //Xử lý khi tua song
+                progress.onchange = function(e){// e.target.value: % bai hat
+                    const seakTime = audio.duration / 100 * e.target.value
+                    audio.currentTime = seakTime
+                }
+            }, 
+
+            loadCurrentSong: function(){    
+                heading.textContent = this.currentSong.name
+                cdThr.style.backgroundImage = `url(${this.currentSong.image})`
+                audio.src = this.currentSong.path
+                
+            },
+            start: function(){
+                //Định nghĩa các thuộc tính cho object
+                this.defineProperties()
+
+                //Lắng nghe và xử lý các sử kiện(DOM events)
+                this.handleEvents()
+
+                //Tải bài hát đầu tiên vào UI khi chạy ứng dụng
+                this.loadCurrentSong()
+
+                //// Render playlist
+                this.render()
+            }
+        }
+
+        app.start()
+
+
+    </script>
+    
+</body>
+</html>

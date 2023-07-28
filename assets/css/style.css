@@ -1,0 +1,168 @@
+:root{
+    --primary-color: #FF00FF;
+    --text-color: #2C2C2B
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: inherit;
+}
+
+body{
+    background-color: #d3d3d3;
+}
+
+html{
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+.player{
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.dashboard{
+    padding: 20px 20px;
+    background-color: #fff;
+    border-radius: 20px;
+    position: fixed;
+    width: 100%;;
+    max-width: 500px;
+    box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+header{
+    text-align: center;
+    margin-bottom: 10px;
+}
+header h2{
+    color: var(--text-color);
+    font-size: 18px;
+}
+header h4{
+    color: var(--primary-color);
+    font-size: 12px;
+}
+.cd{
+    display: flex;
+    width: 225px;
+    margin: auto; /*su dung de can giữa */
+}
+.cd-thr{
+    border-radius: 50%;
+    background-image: url(/assets/img/img1.jpg);
+    width: 100%;
+    background-size: cover;
+    padding-top: 100%; /*khoảng trống trên = 100% chiều rộng*/
+}
+.control{
+    display:  flex;
+    justify-content: space-around;
+    align-content: center;
+    flex-wrap: wrap;
+    padding: 20px 20px;
+}
+.control .btn{
+    color: var(--text-color);
+    font-size: 18px;
+    padding: 20px;
+}
+.control .btn.active{
+    color: var(--primary-color);
+}
+.control .btn-pause-play{
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 65px;
+    height: 64px;
+}
+.player .ti-control-pause{
+    display: none;
+}
+.player.playing .ti-control-pause{
+    display: inline-block;
+}
+.player.playing .ti-control-play{
+    display: none;
+}
+.player .ti-control-play{
+    display: block;
+}
+.progress{
+    width: 100%;
+    -webkit-appearance: none; /*loại bỏ thuộc tính mặc định giao diện của range*/
+    background-color: #d3d3d3;
+    outline: none;
+    border-radius: 20px;
+    height: 8px;
+    opacity: 0.7;
+}
+.progress::-webkit-slider-thumb{ /*tùy chỉnh giao diện của cửa sổ trượt (slider thumb) của thanh trượt (<input type="range">)*/
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: var(--primary-color);
+    height: 8px;
+    width: 12px;
+    cursor: pointer;
+}
+
+/* Play lish */
+.playlist{
+    margin-top: 450px;
+    padding: 10px;
+    position: absolute;
+    width: 100%;
+}
+.song{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    background-color: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+}
+.song .avt{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+.song.active .title,
+.song.active .author,
+.song.active .options{
+    color: #fff;
+}
+.song .inf{
+    flex: 1;
+    padding: 0 12px;
+}
+.song .title{
+    font-size: 18px;
+    color: var(--text-color);
+}
+.song .author{
+    font-size: 14px;
+    color: #999;
+}
+.song .options{
+    padding: 0 10px;
+    color: #999;
+    font-size: 20px;
+}
+
+.song.active{
+    background-color: var(--primary-color);
+}
+.song:active{
+    opacity: 0.8;
+}
