@@ -11,7 +11,7 @@
 <body>
     <!--Player-->
     <div class="player">
-
+        
         <!--Dashboard-->
         <div class="dashboard">
             <!--Header-->
@@ -53,8 +53,7 @@
         <div class="playlist"></div>
 
 
-    </div>
-
+        </div>
 
 
 
@@ -64,6 +63,8 @@
     <script>
         const $ = document.querySelector.bind(document)
         const $$ = document.querySelectorAll.bind(document)
+
+        const PLAYER_STORAGE_KEY = 'SEP21_PLAYER'
 
         const player = $('.player')
         const cd = $('.cd')
@@ -76,12 +77,15 @@
         const nextBtn = $('.btn-next')
         const randomBtn = $('.btn-random')
         const repeatBtn = $('.btn-repeat')
+        const playList = $('.playlist')
+        
 
         const app = {  
             currenIndex: 0,
             isPlaying: false,
             isRandom: false,
             isRepeat: false, 
+            config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
             songs: [
                 {
                     name: 'Shelter',
@@ -132,10 +136,13 @@
                     image: './assets/img/img8.jpg'
                 },
             ],
-        
+            setConfig: function(key, value){
+                this.config[key] = value;
+                localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config))
+            },
             render: function(){
-                    const html = this.songs.map(song=>{
-                        return `<div class="song">
+                    const html = this.songs.map((song, index)=>{
+                        return `<div class="song ${index === this.currenIndex ? 'active' : ''}" data-index=${index}>
                                     <div class="avt" style="background-image: url('${song.image}')"></div>
                                     <div class="inf">
                                         <h3 class="title">${song.name}</h3>
@@ -146,7 +153,7 @@
                                     </div>
                                 </div>`
                     })
-                    $('.playlist').innerHTML = html.join('')
+                    playList.innerHTML = html.join('')
             },
 
             defineProperties: function(){
@@ -227,6 +234,8 @@
                         _this.preSong()
                     }
                     audio.play() // change source nên phải play lại
+                    _this.render()
+                    _this.scrollToActiveSong()
                 }
 
                 //Khi next song
@@ -237,25 +246,80 @@
                         _this.nextSong()
                     }
                     audio.play() // change source nên phải play lại
+                    _this.render()
+                    _this.scrollToActiveSong()
                 }
 
-                //Xử lý bật tắt random song
+                //Xử lý bật / tắt random song
                 randomBtn.onclick = function(){
                     _this.isRandom = !_this.isRandom
+                    _this.setConfig('isRandom', _this.isRandom)
                     randomBtn.classList.toggle('active', _this.isRandom)
+                }
+
+                //Xử lý bật lặp song
+                repeatBtn.onclick = function(){
+                    _this.isRepeat = !_this.isRepeat
+                    _this.setConfig('isRepeat', _this.isRepeat)
+                    repeatBtn.classList.toggle('active', _this.isRepeat)
                 }
 
                 //Xử lý next song khi audio ended
                 audio.onended = function(){
-                   nextBtn.click()
+                    if(_this.isRepeat){
+                        audio.play()
+                    } else{
+                        nextBtn.click()
+                    } 
+                }
+
+                //Lắng nghe hành vi click vào playlish
+                playList.onclick = function(e){  // e là event nhận được ở đây
+                    const songNode = e.target.closest('.song:not(.active)')
+                    if(e.target.closest('.song:not(.active)') || e.target.closest('.options')){// target là đích ta click vào
+                        //Xử lý khi click vào song
+                        if(e.target.closest('.song:not(.active)')){
+                            _this.currenIndex = Number(songNode.dataset.index)
+                            _this.loadCurrentSong()
+                            _this.render()
+                            audio.play()
+                            
+                        }
+                        //Xử lý khi click vào song option
+                        if(e.target.closest('.options')){
+                            
+                        }
+                        
+                        
+                    }   
                 }
             }, 
+            scrollToActiveSong: function(){
+                setTimeout(() => {
+                    if(this.currenIndex < 4){
+                        $('.song.active').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'end'
+                    })
+                    } else {
+                        $('.song.active').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    })
+                    }
 
+                    
+                }, 300);
+            },
             loadCurrentSong: function(){    
                 heading.textContent = this.currentSong.name
                 cdThr.style.backgroundImage = `url(${this.currentSong.image})`
                 audio.src = this.currentSong.path
                 
+            },
+            loadConfig: function(){
+                this.isRandom = this.config.isRandom
+                this.isRepeat = this.config.isRepeat
             },
             preSong: function(){
                 this.currenIndex--
@@ -280,6 +344,8 @@
                 this.loadCurrentSong()
             },
             start: function(){ 
+                //Gna cấu hình từ cònfig vào ứng dụng
+                this.loadConfig()
                 //Định nghĩa các thuộc tính cho object
                 this.defineProperties()
 
@@ -291,7 +357,11 @@
 
                 //// Render playlist
                 this.render()
-            }
+
+                //Hiển thị trạng thái ban đầu cảu button repeat và random
+                randomBtn.classList.toggle('active', this.isRandom)
+                repeatBtn.classList.toggle('active', this.isRepeat)
+            }   
         }
 
         app.start()
