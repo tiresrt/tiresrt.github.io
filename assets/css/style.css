@@ -1,5 +1,5 @@
 :root{
-    --primary-color: #FF00FF;
+    --primary-color: #F81894;
     --text-color: #2C2C2B
 }
 
@@ -57,6 +57,7 @@ header h4{
     width: 100%;
     background-size: cover;
     padding-top: 100%; /*khoảng trống trên = 100% chiều rộng*/
+    background-position: center;
 }
 .control{
     display:  flex;
