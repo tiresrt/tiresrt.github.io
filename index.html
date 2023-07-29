@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/fonts/themify-icons/themify-icons.css">
     <link rel="shortcut icon" href="#">
+    <script src="https://kit.fontawesome.com/03dcdfffe5.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <!--Player-->
@@ -26,20 +27,20 @@
         <!--Control-->
         <div class="control">
             <div class="btn btn-repeat">
-                <i class="ico ti-reload"></i>
+                <i class="fa-solid fa-rotate-right"></i>
             </div>
             <div class="btn btn-back">
-                <i class="ti-control-skip-backward"></i>
+                <i class="fa-solid fa-backward"></i>
             </div>
             <div class="btn btn-pause-play">
-                <i class="ico ti-control-play"></i>
-                <i class="ico ti-control-pause"></i>
+                <i class="fa-solid fa-play"></i>
+                <i class="fa-solid fa-pause"></i>
             </div>
             <div class="btn btn-next">
-                <i class="ico ti-control-skip-forward"></i>
+                <i class="fa-solid fa-forward"></i>
             </div>
             <div class="btn btn-random">
-                <i class="ico ti-control-shuffle"></i>
+                <i class="fa-solid fa-shuffle"></i>
             </div>
         </div>
 
@@ -293,6 +294,24 @@
                         
                     }   
                 }
+                
+                
+                document.onscroll = function(){
+                    const threshold = 100;
+                    const songElements = $$('.song')
+
+                    _this.songs.forEach((song, index) =>{
+                        const rect = songElements[index].getBoundingClientRect() // lấy rect
+                        if(rect.top <= threshold){
+                            songElements[index].classList.add('opacity') 
+                        } else {
+                            songElements[index].classList.remove('opacity')
+                        }
+                    })
+                    
+                }
+                
+
             }, 
             scrollToActiveSong: function(){
                 setTimeout(() => {
